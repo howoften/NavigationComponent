@@ -19,6 +19,10 @@
         }
         return [LLNavigationAnimator new];
     }
+    if (!toVC.navigationItem.hidesBackButton) {
+        fromVC.navigationItem.backBarButtonItem = [UIBarButtonItem new];
+    }
+
     return nil;
 }
 @end
