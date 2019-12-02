@@ -122,11 +122,6 @@ static const void *kSnapshotKey = &kSnapshotKey;
         [current.navigationController popToViewController:current.navigationController.viewControllers[index] animated:YES];
     }
 }
-+ (UIViewController *)forwardViewController {
-    return nil;
-}
-+ (UIViewController *)backwardViewController {
-    return nil;
-}
+
 @end
 

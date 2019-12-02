@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "LLNavigationBar.h"
 @interface UIViewController(NavigationBar)
-
 @property (nonatomic, strong, readonly)LLNavigationBar * navigationBar;
+@property (nonatomic, strong, readonly)UIViewController * forwardViewController;
+@property (nonatomic, strong, readonly)UIViewController * backwardViewController;
 
 @end
 
@@ -29,7 +30,5 @@
 + (void)gobackSevenTimes;
 + (void)gobackEightTimes;
 + (void)gobackNineTimes;
-+ (UIViewController *)forwardViewController;
-+ (UIViewController *)backwardViewController;
 
 @end

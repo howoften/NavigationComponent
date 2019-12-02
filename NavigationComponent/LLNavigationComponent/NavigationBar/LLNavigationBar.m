@@ -171,6 +171,49 @@ static const void *kNavigationBarKey = &kNavigationBarKey;
     return bar;
 }
 
+- (UIViewController *)forwardViewController {//TODO 持有
+    if (self.navigationController) {
+        NSInteger index = [self.navigationController.viewControllers indexOfObject:self]+1;
+        if (index > -1 && index < self.navigationController.viewControllers.count) {
+            return self.navigationController.viewControllers[index];
+        }else if (index == self.navigationController.viewControllers.count && self.navigationController.presentedViewController) {
+            if ([self.navigationController.presentedViewController isKindOfClass:[UINavigationController class]]) {
+                return [((UINavigationController *)self.navigationController.presentedViewController).viewControllers firstObject];
+            }else {
+                return self.navigationController.presentedViewController;
+            }
+        }
+    }else if (self.presentedViewController) {
+        if ([self.presentedViewController isKindOfClass:[UINavigationController class]]) {
+            return [((UINavigationController *)self.presentedViewController).viewControllers firstObject];
+        }else {
+            return self.presentedViewController;
+        }
+    }
+    return nil;
+}
+- (UIViewController *)backwardViewController {
+    if (self.navigationController) {
+        NSInteger index = [self.navigationController.viewControllers indexOfObject:self]-1;
+        if (index > -1 && index < self.navigationController.viewControllers.count) {
+            return self.navigationController.viewControllers[index];
+        }else if (index == -1 && self.navigationController.presentingViewController) {
+            if ([self.navigationController.presentingViewController isKindOfClass:[UINavigationController class]]) {
+                return [((UINavigationController *)self.navigationController.presentingViewController).viewControllers lastObject];
+            }else {
+                return self.navigationController.presentingViewController;
+            }
+        }
+    }else if (self.presentingViewController) {
+        if ([self.presentingViewController isKindOfClass:[UINavigationController class]]) {
+            return [((UINavigationController *)self.presentingViewController).viewControllers lastObject];
+        }else {
+            return self.presentingViewController;
+        }
+    }
+    return nil;
+}
+
 //- (BOOL)configed {
 //    return [objc_getAssociatedObject(self, &kConfigedKey) boolValue];
 //}

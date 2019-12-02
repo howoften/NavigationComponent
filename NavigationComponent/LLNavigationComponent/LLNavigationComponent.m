@@ -82,8 +82,7 @@ static LLNavigationComponent *component = nil;
 + (void)gobackSevenTimes {[LLNavigationPerformance gobackSevenTimes]; }
 + (void)gobackEightTimes { [LLNavigationPerformance gobackEightTimes]; }
 + (void)gobackNineTimes {[LLNavigationPerformance gobackNineTimes]; }
-+ (UIViewController *)forwardViewController { return [LLNavigationPerformance forwardViewController]; }
-+ (UIViewController *)backwardViewController { return [LLNavigationPerformance backwardViewController]; }
+
 
 @end
 

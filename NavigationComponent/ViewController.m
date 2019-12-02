@@ -23,6 +23,7 @@
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 414, 44)];
     view.backgroundColor = [UIColor redColor];
     self.navigationBar.backgroundColor = [UIColor colorWithRed:((float)arc4random_uniform(256) / 255.0) green:((float)arc4random_uniform(256) / 255.0) blue:((float)arc4random_uniform(256) / 255.0) alpha:1.0];
+    
 }
 
 
@@ -31,7 +32,7 @@
     vc.navigationBar.showNavigationBarSeparator = YES;
     vc.view.backgroundColor = [UIColor whiteColor];
 
-        [LLNavigationComponent openViewController:vc];
+    [LLNavigationComponent openViewController:vc];
 }
 
 - (IBAction)opemModal:(id)sender {
