@@ -46,7 +46,7 @@
 		2D16D6EA23933ECF00181484 /* LLNavigationHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LLNavigationHelper.h; sourceTree = "<group>"; };
 		2D16D6EB23933ECF00181484 /* LLNavigationHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LLNavigationHelper.m; sourceTree = "<group>"; };
 		2D16D6ED2393408E00181484 /* LLNavigationPrivate-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LLNavigationPrivate-Header.h"; sourceTree = "<group>"; };
-		2D16D6F4239370CB00181484 /* LLNavigationPublic-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "LLNavigationPublic-Header.h"; path = "NavigationComponent/LLNavigationPublic-Header.h"; sourceTree = SOURCE_ROOT; };
+		2D16D6F4239370CB00181484 /* LLNavigationPublic-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "LLNavigationPublic-Header.h"; path = "NavigationComponent/LLNavigationComponent/LLNavigationPublic-Header.h"; sourceTree = SOURCE_ROOT; };
 		2D16D6F52393752200181484 /* LLNavigationApperance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LLNavigationApperance.h; sourceTree = "<group>"; };
 		2D16D6F62393752200181484 /* LLNavigationApperance.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LLNavigationApperance.m; sourceTree = "<group>"; };
 		2D16D6F82393F42700181484 /* LLNavigationAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LLNavigationAction.h; sourceTree = "<group>"; };
@@ -87,12 +87,7 @@
 		2D16D6C123920DC400181484 /* NavigationComponent */ = {
 			isa = PBXGroup;
 			children = (
-				2D16D6E62392B1C500181484 /* Assistant */,
-				2D16D6DC2392164300181484 /* NavigationBar */,
-				2D16D6DB2392162600181484 /* NavigationAction */,
-				2D16D6F4239370CB00181484 /* LLNavigationPublic-Header.h */,
-				2D16D6E02392396700181484 /* LLNavigationComponent.h */,
-				2D16D6E12392396700181484 /* LLNavigationComponent.m */,
+				2D16D73B2395515800181484 /* LLNavigationComponent */,
 				2D16D6C223920DC400181484 /* AppDelegate.h */,
 				2D16D6C323920DC400181484 /* AppDelegate.m */,
 				2D16D6C823920DC400181484 /* ViewController.h */,
@@ -142,6 +137,19 @@
 				2D16D6EB23933ECF00181484 /* LLNavigationHelper.m */,
 			);
 			path = Assistant;
+			sourceTree = "<group>";
+		};
+		2D16D73B2395515800181484 /* LLNavigationComponent */ = {
+			isa = PBXGroup;
+			children = (
+				2D16D6E62392B1C500181484 /* Assistant */,
+				2D16D6DC2392164300181484 /* NavigationBar */,
+				2D16D6DB2392162600181484 /* NavigationAction */,
+				2D16D6F4239370CB00181484 /* LLNavigationPublic-Header.h */,
+				2D16D6E02392396700181484 /* LLNavigationComponent.h */,
+				2D16D6E12392396700181484 /* LLNavigationComponent.m */,
+			);
+			path = LLNavigationComponent;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
