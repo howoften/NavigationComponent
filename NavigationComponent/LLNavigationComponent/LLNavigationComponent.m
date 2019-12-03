@@ -17,6 +17,7 @@
 @property (nonatomic, strong)id standard_viewcontroller;
 @property (nonatomic, strong)id standard_navigationcontroller;
 @property (nonatomic, strong)NSPointerArray *delegates;
+@property (nonatomic, strong)NSMutableDictionary *popGestures;
 
 @property (nonatomic, strong)id<UINavigationControllerDelegate> navigationDelegat;
 @end
@@ -28,6 +29,7 @@ static LLNavigationComponent *component = nil;
     dispatch_once(&onceToken, ^{
         component = [[LLNavigationComponent alloc] init];
         component.delegates = [NSPointerArray weakObjectsPointerArray];
+        component.popGestures = [NSMutableDictionary dictionaryWithCapacity:0];
         component.navigationDelegat = [LLNavigationClass new];
         [component addNavigationNewChildElementDelegate:(id<LLNavigationPrivateProtocol>)LLNavigationApperance.class];
         [component addNavigationNewChildElementDelegate:(id<LLNavigationPrivateProtocol>)LLNavigationAction.class];
@@ -45,6 +47,14 @@ static LLNavigationComponent *component = nil;
     [self swizzlingForStandaredNavigationController:nav_entity];
 }
 
++ (void)enablePopGestureRecongnizerAndProtectRootViewControllerPopAction:(UINavigationController *_Nonnull)navigationController {
+    [LLNavigationAction.class navigationController:navigationController enablePopGesture:YES];
+}
+
++ (void)protectRootViewControllerPopAction:(UINavigationController *_Nonnull)navigationController {
+    [LLNavigationAction.class navigationController:navigationController enablePopGesture:NO];
+}
+
 - (void)addNavigationNewChildElementDelegate:(id<LLNavigationPrivateProtocol>)delegate {
     [self.delegates addPointer:(__bridge void * _Nullable)(delegate)];
 }
@@ -59,7 +69,8 @@ static LLNavigationComponent *component = nil;
     [LLMehodSwizzle swizzleForClass:navigationController.class originSEL:@selector(setViewControllers:) anotherClass:[LLNavigationClass class] newSEL:@selector(setViewControllers:)];
 
     [LLMehodSwizzle swizzleForClass:navigationController.class originSEL:@selector(setDelegate:) anotherClass:[LLNavigationClass class] newSEL:@selector(setDelegate:)];
-    
+//    [LLMehodSwizzle swizzleForClass:navigationController.class originSEL:@selector(viewDidLoad) anotherClass:[LLNavigationClass class] newSEL:@selector(viewDidLoad)];
+    [LLMehodSwizzle swizzleForClass:navigationController.class originSEL:@selector(interactivePopGestureRecognizer) anotherClass:[LLNavigationClass class] newSEL:@selector(interactivePopGestureRecognizer)];
 }
 
 + (UIViewController *)contributeViewController {
@@ -67,6 +78,12 @@ static LLNavigationComponent *component = nil;
 }
 + (UINavigationController *)contributeNavigationController {
     return [self share].standard_navigationcontroller;
+}
++ (UIGestureRecognizer *)popGestureForNavigationController:(UINavigationController *)navigationController {
+    if ([navigationController isKindOfClass:[UINavigationController class]]) {
+       return [component.popGestures objectForKey:[NSString stringWithFormat:@"%lx", (unsigned long)navigationController.hash]];
+    }
+    return nil;
 }
 
 + (void)openViewController:(UIViewController *)viewController { [LLNavigationPerformance openViewController:viewController]; }
@@ -171,4 +188,20 @@ static LLNavigationComponent *component = nil;
         NSLog(@"%@", [NSString stringWithFormat:@"[%@ setDelegate:], this selector is prohibit.", NSStringFromClass([component.standard_navigationcontroller class])]);
     }
 }
+
+//- (void)viewDidLoad {
+////    [self viewDidLoad];
+//    for (id element in component.delegates) {
+//        if ([element respondsToSelector:@selector(navigationController:viewDidLoad:)]) {
+//            [[element class] navigationController:self viewDidLoad:nil];
+//        }
+//    }
+//}
+
+- (UIGestureRecognizer *)interactivePopGestureRecognizer {
+    UIGestureRecognizer *gesture = [super interactivePopGestureRecognizer];
+    [component.popGestures setObject:gesture forKey:[NSString stringWithFormat:@"%lx", (unsigned long)self.hash]];
+    return nil;
+}
+
 @end

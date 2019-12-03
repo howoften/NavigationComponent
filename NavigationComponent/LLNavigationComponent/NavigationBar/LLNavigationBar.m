@@ -153,6 +153,8 @@
 @end
 
 static const void *kNavigationBarKey = &kNavigationBarKey;
+static const void *kEnableGestureKey = &kEnableGestureKey;
+
 //static const void *kConfigedKey = &kConfigedKey;
 @implementation UIViewController(NavigationBar)
 
@@ -213,7 +215,19 @@ static const void *kNavigationBarKey = &kNavigationBarKey;
     }
     return nil;
 }
+- (void)setEnablePopGesture:(BOOL)enablePopGesture {
+    objc_setAssociatedObject(self, &kEnableGestureKey, @(enablePopGesture), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 
+}
+- (BOOL)enablePopGesture {
+    NSNumber *enable = objc_getAssociatedObject(self, &kEnableGestureKey);
+    if (!enable) {
+        enable = @(YES);
+        [self setEnablePopGesture:enable.boolValue];
+    }
+    return [enable boolValue];
+    
+}
 //- (BOOL)configed {
 //    return [objc_getAssociatedObject(self, &kConfigedKey) boolValue];
 //}

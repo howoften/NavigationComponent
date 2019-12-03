@@ -22,6 +22,7 @@
 		2D16D6FA2393F42700181484 /* LLNavigationAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D16D6F92393F42700181484 /* LLNavigationAction.m */; };
 		2D16D7372394E73600181484 /* LLNavigationPerformance.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D16D7362394E73600181484 /* LLNavigationPerformance.m */; };
 		2D16D73A2394E7F200181484 /* LLNavigationAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D16D7392394E7F200181484 /* LLNavigationAnimator.m */; };
+		2D16D73E2395F3D600181484 /* LLNavigationInteractivePop.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D16D73D2395F3D600181484 /* LLNavigationInteractivePop.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +56,8 @@
 		2D16D7362394E73600181484 /* LLNavigationPerformance.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LLNavigationPerformance.m; sourceTree = "<group>"; };
 		2D16D7382394E7F200181484 /* LLNavigationAnimator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LLNavigationAnimator.h; sourceTree = "<group>"; };
 		2D16D7392394E7F200181484 /* LLNavigationAnimator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LLNavigationAnimator.m; sourceTree = "<group>"; };
+		2D16D73C2395F3D600181484 /* LLNavigationInteractivePop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LLNavigationInteractivePop.h; sourceTree = "<group>"; };
+		2D16D73D2395F3D600181484 /* LLNavigationInteractivePop.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LLNavigationInteractivePop.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +115,8 @@
 				2D16D7362394E73600181484 /* LLNavigationPerformance.m */,
 				2D16D7382394E7F200181484 /* LLNavigationAnimator.h */,
 				2D16D7392394E7F200181484 /* LLNavigationAnimator.m */,
+				2D16D73C2395F3D600181484 /* LLNavigationInteractivePop.h */,
+				2D16D73D2395F3D600181484 /* LLNavigationInteractivePop.m */,
 			);
 			path = NavigationAction;
 			sourceTree = "<group>";
@@ -229,6 +234,7 @@
 				2D16D6E52392AC7100181484 /* LLNavigationBar.m in Sources */,
 				2D16D6DF23922F1800181484 /* NavigationController.m in Sources */,
 				2D16D6C423920DC400181484 /* AppDelegate.m in Sources */,
+				2D16D73E2395F3D600181484 /* LLNavigationInteractivePop.m in Sources */,
 				2D16D6E22392396700181484 /* LLNavigationComponent.m in Sources */,
 				2D16D73A2394E7F200181484 /* LLNavigationAnimator.m in Sources */,
 				2D16D6FA2393F42700181484 /* LLNavigationAction.m in Sources */,

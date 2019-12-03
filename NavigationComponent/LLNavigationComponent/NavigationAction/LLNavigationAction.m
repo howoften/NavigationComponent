@@ -9,6 +9,7 @@
 #import "LLNavigationAction.h"
 #import "LLNavigationAnimator.h"
 #import "LLNavigationHelper.h"
+#import "LLNavigationInteractivePop.h"
 
 @implementation LLNavigationAction
 + (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC
@@ -26,5 +27,8 @@
     return nil;
 }
 
++ (void)navigationController:(UINavigationController *)navigationController enablePopGesture:(BOOL)enable {
+    [LLNavigationInteractivePop navigationController:navigationController enablePopGesture:enable];
+}
 
 @end

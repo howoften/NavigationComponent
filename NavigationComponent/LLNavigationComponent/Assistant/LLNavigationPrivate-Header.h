@@ -20,7 +20,7 @@
 + (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated;
 + (void)navigationController:(UINavigationController *)navigationController setViewControllers:(NSArray<UIViewController *> *)viewControllers animated:(BOOL)animated;
 + (void)navigationController:(UINavigationController *)navigationController setViewControllers:(NSArray<__kindof UIViewController *> *)viewControllers;
-
++ (void)navigationController:(UINavigationController *)navigationController enablePopGesture:(BOOL)enable;
 @end
 
 @protocol LLNavigationTransitionProtocol
@@ -32,6 +32,7 @@
 + (void)addNavigationNewChildElementDelegate:(id<LLNavigationPrivateProtocol>)delegate;
 + (UIViewController *)contributeViewController;
 + (UINavigationController *)contributeNavigationController;
++ (UIGestureRecognizer *)popGestureForNavigationController:(UINavigationController *)navigationController;
 @end
 
 @interface LLNavigationBar (Extension)

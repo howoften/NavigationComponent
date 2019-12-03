@@ -7,7 +7,7 @@
 //
 
 #import "NavigationController.h"
-
+#import "LLNavigationComponent.h"
 @interface NavigationController ()
 
 @end
@@ -17,6 +17,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+
+    
+    [LLNavigationComponent enablePopGestureRecongnizerAndProtectRootViewControllerPopAction:self];
+//    [LLNavigationComponent protectRootViewControllerPopAction:self];
 }
 
 /*
