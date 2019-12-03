@@ -95,6 +95,15 @@
                 [sub removeFromSuperview];
             }
         }
+        if (!snapshot) {
+            snapshot = [LLNavigationAnimator snapshotForViewController:toViewController];
+            CATransform3D fold = CATransform3DIdentity;
+            fold.m34 = 1.0/-600;
+            fold = CATransform3DScale(fold, 0.95, 0.95, 1);
+            snapshot.layer.transform = fold;
+            [containerView addSubview:snapshot];
+            [containerView insertSubview:snapshot belowSubview:fromView];
+        }
 //        [containerView insertSubview:toView belowSubview:snapshot];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)([self transitionDuration:transitionContext]/2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
              [UIView animateWithDuration:[self transitionDuration:transitionContext]/2 animations:^{

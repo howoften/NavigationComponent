@@ -37,10 +37,10 @@
 
 + (void)navigationController:(UINavigationController *)navigationController pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
     LLNavigationBar *bar = [viewController valueForKey:@"navigationBar"];
-    if (!bar.superview) {
-        [viewController.view addSubview:bar];
-        
-    }
+//    if (!bar.superview) {
+//        [viewController.view addSubview:bar];
+//
+//    }
 
     
 //    NSLog(@"%@", NSStringFromSelector(_cmd));
