@@ -112,15 +112,19 @@ static const void *kSnapshotKey = &kSnapshotKey;
 
 + (void)gobackTimes:(NSUInteger)times {
     UIViewController *current = [LLNavigationHelper topViewController];
-     if (current.navigationController.presentingViewController) {
-        [current.navigationController dismissViewControllerAnimated:YES completion:nil];
+    if (current.navigationController) {
+        NSUInteger count = current.navigationController.viewControllers.count;
+        if (count-1-times >= 0) {
+            NSUInteger index =MAX(0, count-1-times);
+            [current.navigationController popToViewController:current.navigationController.viewControllers[index] animated:YES];
+            
+        }else if (current.navigationController.presentingViewController) {
+            [current.navigationController dismissViewControllerAnimated:YES completion:nil];
+        }
     }else if (current.presentingViewController) {
         [current dismissViewControllerAnimated:YES completion:nil];
-    }else if (current.navigationController) {
-        NSUInteger count = current.navigationController.viewControllers.count;
-        NSUInteger index =MAX(0, count-1-times);
-        [current.navigationController popToViewController:current.navigationController.viewControllers[index] animated:YES];
     }
+
 }
 
 @end
