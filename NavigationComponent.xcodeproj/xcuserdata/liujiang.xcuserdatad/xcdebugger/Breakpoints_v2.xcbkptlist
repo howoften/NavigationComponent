@@ -34,22 +34,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E46D1503-CF6E-40E0-92F0-EC5C36A5F361"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "NavigationComponent/LLNavigationComponent/NavigationBar/LLNavigationBar.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "109"
-            endingLineNumber = "109"
-            landmarkName = "-setShowNavigationBarSeparator:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "CEE469A3-66CD-4811-8596-67888BDCA0A7"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -57,9 +41,9 @@
             filePath = "NavigationComponent/LLNavigationComponent/NavigationBar/LLNavigationBar.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "129"
-            endingLineNumber = "129"
-            landmarkName = "-backMaskView"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
+            landmarkName = "-separateLine"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

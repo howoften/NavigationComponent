@@ -93,11 +93,6 @@
 
             [self.layer setShadowPath:[[UIBezierPath bezierPathWithRect:self.bounds] CGPath]];
         }else {
-            self.layer.shadowColor = [UIColor clearColor].CGColor;
-            self.layer.shadowOffset = CGSizeMake(0, 0);
-            self.layer.shadowRadius = 0;
-            self.layer.shadowOpacity = 0.f;
-
             [self.layer setShadowPath:[[UIBezierPath bezierPathWithRect:CGRectZero] CGPath]];
         }
         [self setNeedsDisplay];
