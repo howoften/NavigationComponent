@@ -99,6 +99,7 @@ static LLNavigationComponent *component = nil;
 + (void)gobackSevenTimes {[LLNavigationPerformance gobackSevenTimes]; }
 + (void)gobackEightTimes { [LLNavigationPerformance gobackEightTimes]; }
 + (void)gobackNineTimes {[LLNavigationPerformance gobackNineTimes]; }
++ (void)gobackTimes:(NSUInteger)times {[LLNavigationPerformance gobackTimes:times]; }
 
 
 @end

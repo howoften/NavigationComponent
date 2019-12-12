@@ -12,6 +12,8 @@
 
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *level;
+@property (nonatomic)NSUInteger index;
+@property (weak, nonatomic) IBOutlet UILabel *levelNum;
 
 @end
 
@@ -25,9 +27,13 @@
 //    view.backgroundColor = [UIColor redColor];
     if (self.navigationController.childViewControllers.count != 1) {
         self.navigationBar.backgroundColor = [UIColor colorWithRed:((float)arc4random_uniform(256) / 255.0) green:((float)arc4random_uniform(256) / 255.0) blue:((float)arc4random_uniform(256) / 255.0) alpha:1.0];
+    }else {
+        self.navigationBar.backgroundColor = [UIColor colorWithWhite:0.95 alpha:1];
     }
     self.navigationItem.title = @"标题";
-    self.level.text = [NSString stringWithFormat:@"第%lu层", [self.navigationController.childViewControllers indexOfObject:self]];
+    self.level.text = [NSString stringWithFormat:@"第%lu层", [self.navigationController.childViewControllers count]];
+    self.index = (self.navigationController.viewControllers.count > 1) ? 1 : 0;
+    self.levelNum.text = [NSString stringWithFormat:@"%lu", self.index];
 }
 
 
@@ -48,7 +54,7 @@
 }
 
 - (IBAction)back:(id)sender {
-    [LLNavigationComponent goback];
+    [LLNavigationComponent gobackTimes:self.index];
 }
 
 - (IBAction)backroot:(id)sender {
@@ -56,5 +62,20 @@
 }
 - (void)dealloc {
     
+}
+- (IBAction)increase:(id)sender {
+    if (self.index < self.navigationController.viewControllers.count-1) {
+        self.index++;
+        self.levelNum.text = [NSString stringWithFormat:@"%lu", self.index];
+
+    }
+    
+}
+- (IBAction)decrease:(id)sender {
+    if (self.index > 0) {
+        self.index--;
+        self.levelNum.text = [NSString stringWithFormat:@"%lu", self.index];
+
+    }
 }
 @end
