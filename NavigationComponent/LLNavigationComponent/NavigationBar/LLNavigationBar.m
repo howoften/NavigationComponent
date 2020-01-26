@@ -16,23 +16,28 @@
 @property (nonatomic, strong)UIVisualEffectView *backMaskView;
 
 @property (nonatomic, strong)NSNumber *constantHeight;
+@property (nonatomic, strong)NSNumber *height;
+
 @property (nonatomic, assign)BOOL immutable;
 @end
 
 @implementation LLNavigationBar
 
-- (instancetype)init {
+- (instancetype)initWithBarHeight:(CGFloat)height {
     self = [super init];
     if (self) {
+        self.height = @(height);
         [self _init];
     }
     return self;
 }
 
+
+
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        
+        self.height = @(frame.size.height);
         [self _init];
     }
     return self;
@@ -59,6 +64,9 @@
     [self addSubview:self.backMaskView];
     self.immutable = NO;
     self.layer.zPosition = 100000000L;
+    if (!self.height) {
+        self.height = @(44.f);
+    }
 //    self.clipsToBounds = NO;
     
 }
@@ -68,7 +76,7 @@
     informal.origin.x = 0;
     informal.origin.y = 0;
     informal.size.width = CGRectGetWidth([UIScreen mainScreen].bounds);
-    informal.size.height = self.constantHeight!=nil?self.constantHeight.floatValue: 44+(CGRectGetHeight([UIApplication sharedApplication].statusBarFrame)==40?20:CGRectGetHeight([UIApplication sharedApplication].statusBarFrame));
+    informal.size.height = self.constantHeight!=nil?self.constantHeight.floatValue: self.height.floatValue+(CGRectGetHeight([UIApplication sharedApplication].statusBarFrame)==40?20:CGRectGetHeight([UIApplication sharedApplication].statusBarFrame));
 
     [super setFrame:informal];
 
@@ -119,8 +127,8 @@
         self.backgroundColor = [UIColor colorWithWhite:1 alpha:0.3];
         UIBlurEffect *blur = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
         _backMaskView = [[UIVisualEffectView alloc] initWithEffect:blur];
-        _backMaskView.frame = self.bounds;
     }
+    _backMaskView.frame = self.bounds;
     return _backMaskView;
 }
 
@@ -159,8 +167,8 @@ static const void *kEnableGestureKey = &kEnableGestureKey;
 
 - (LLNavigationBar *)navigationBar {
     LLNavigationBar *bar = objc_getAssociatedObject(self, &kNavigationBarKey);
-    if (!bar) {
-        bar = [[LLNavigationBar alloc] init];
+    if (!bar && self.navigationController.navigationBar) {
+        bar = [[LLNavigationBar alloc] initWithBarHeight:CGRectGetHeight(self.navigationController.navigationBar.frame)];
         bar.immutable = ![self isKindOfClass:[LLNavigationComponent contributeViewController].class];
 
         [self setNavigationBar:bar];

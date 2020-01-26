@@ -36,7 +36,7 @@
 }
 
 + (void)navigationController:(UINavigationController *)navigationController pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
-    LLNavigationBar *bar = [viewController valueForKey:@"navigationBar"];
+//    LLNavigationBar *bar = [viewController valueForKey:@"navigationBar"];
 //    if (!bar.superview) {
 //        [viewController.view addSubview:bar];
 //
