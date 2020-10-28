@@ -10,7 +10,8 @@
 #define LLNavigationPrivate_Header_h
 #import <UIKit/UIKit.h>
 #import "LLNavigationComponent.h"
-#import "LLNavigationBar.h"
+@class LLNavigationBar;
+@class LLNavigationItem;
 @protocol LLNavigationPrivateProtocol
 
 + (void)navigationController:(UINavigationController *)navigationController initWithRootViewController:(UIViewController *)rootViewController;
@@ -36,13 +37,18 @@
 @end
 
 @interface LLNavigationBar (Extension)
-@property (nonatomic, strong)NSNumber *constantHeight;
-@property (nonatomic, assign)BOOL immutable;
+
+- (void)applyConstraint;
 @end
 
 @interface LLNavigationClass: UINavigationController<UINavigationControllerDelegate>
 
 @end
+
+@interface LLControllerClass: UIViewController
+@property (nonatomic, strong)LLNavigationItem *navigationItem_t;
+@end
+
 
 @interface UIViewController(NavigationAction)
 @property (nonatomic, assign)int modal;

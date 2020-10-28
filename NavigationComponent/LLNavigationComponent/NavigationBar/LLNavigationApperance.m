@@ -8,79 +8,112 @@
 
 #import "LLNavigationApperance.h"
 #import "LLNavigationBar.h"
+#import "LLNavigationItem.h"
 
 @implementation LLNavigationApperance
 
 #pragma mark -- LLNavigationPrivateProtocol
 + (void)navigationController:(UINavigationController *)navigationController initWithRootViewController:(UIViewController *)rootViewController {
-    [self clearNavigationBar:navigationController.navigationBar];
+    if (navigationController.class == [LLNavigationComponent contributeNavigationController].class) {
+        [self hiddenNavigationBar:navigationController.navigationBar];
+    }
+    if (rootViewController.class == [LLNavigationComponent contributeViewController].class) {
+        [self hiddenNavigationBar:navigationController.navigationBar];
+    }
     LLNavigationBar *bar = [rootViewController valueForKey:@"navigationBar"];
     if (!bar.superview) {
         [rootViewController.view addSubview:bar];
-        
+        [bar applyConstraint];
+    }
+    if ([rootViewController.navigationItem isKindOfClass:[LLNavigationItem class]]) {
+        [(LLNavigationItem *)rootViewController.navigationItem setNavigationBar:bar];
     }
 //    NSLog(@"%@", NSStringFromSelector(_cmd));
 }
 + (void)navigationController:(UINavigationController *)navigationController initWithCoder:(NSCoder *)aDecoder {
-    [self clearNavigationBar:navigationController.navigationBar];
-//    NSLog(@"%@", NSStringFromSelector(_cmd));
+    if (navigationController.class == [LLNavigationComponent contributeNavigationController].class) {
+        [self hiddenNavigationBar:navigationController.navigationBar];
+    }
+
 }
 
 + (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
-    LLNavigationBar *bar = [viewController valueForKey:@"navigationBar"];
-    if (!bar.superview) {
-        [viewController.view addSubview:bar];
-        
+    UIViewController *rootViewController = viewController;
+    LLNavigationBar *bar = [rootViewController valueForKey:@"navigationBar"];
+    if (rootViewController.class == [LLNavigationComponent contributeViewController].class) {
+        if (!bar.superview) {
+            [rootViewController.view addSubview:bar];
+            [bar applyConstraint];
+        }
+        if ([rootViewController.navigationItem isKindOfClass:[LLNavigationItem class]]) {
+            [(LLNavigationItem *)rootViewController.navigationItem setNavigationBar:bar];
+        }
     }
 //    NSLog(@"%@", NSStringFromSelector(_cmd));
 }
 
 + (void)navigationController:(UINavigationController *)navigationController pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
-//    LLNavigationBar *bar = [viewController valueForKey:@"navigationBar"];
-//    if (!bar.superview) {
-//        [viewController.view addSubview:bar];
-//
+//    UIViewController *rootViewController = viewController;
+//    LLNavigationBar *bar = [rootViewController valueForKey:@"navigationBar"];
+//    if (rootViewController.class == [LLNavigationComponent contributeViewController].class) {
+//        if (!bar.superview) {
+//            [rootViewController.view addSubview:bar];
+//            [bar applyConstraint];
+//        }
+//        if ([rootViewController.navigationItem isKindOfClass:[LLNavigationItem class]]) {
+//            [(LLNavigationItem *)rootViewController.navigationItem setNavigationBar:bar];
+//        }
 //    }
 
-    
 //    NSLog(@"%@", NSStringFromSelector(_cmd));
 
 }
 + (void)navigationController:(UINavigationController *)navigationController presentViewController:(UIViewController *)viewControllerToPresent animated: (BOOL)flag completion:(void (^)(void))completion {
     if ([viewControllerToPresent isKindOfClass:[LLNavigationComponent contributeNavigationController].class] && (viewControllerToPresent.modalPresentationStyle == UIModalPresentationPageSheet || viewControllerToPresent.modalPresentationStyle == UIModalPresentationFormSheet || viewControllerToPresent.modalPresentationStyle == UIModalPresentationPopover)) {
-#ifdef __IPHONE_13_0
-            UIViewController *top = [(UINavigationController *)viewControllerToPresent topViewController];
-            top.navigationBar.constantHeight = @56;
-#endif
+
     }
 //    NSLog(@"%@", NSStringFromSelector(_cmd));
 }
 
 + (void)navigationController:(UINavigationController *)navigationController setViewControllers:(NSArray<UIViewController *> *)viewControllers animated:(BOOL)animated {
     [viewControllers enumerateObjectsUsingBlock:^(UIViewController * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        LLNavigationBar *bar = [obj valueForKey:@"navigationBar"];
-        if (!bar.superview) {
-            [obj.view addSubview:bar];
-            
+        UIViewController *rootViewController = obj;
+        if (obj.class == [LLNavigationComponent contributeViewController].class) {
+            LLNavigationBar *bar = [rootViewController valueForKey:@"navigationBar"];
+            if (!bar.superview) {
+                [rootViewController.view addSubview:bar];
+                [bar applyConstraint];
+            }
+            if ([rootViewController.navigationItem isKindOfClass:[LLNavigationItem class]]) {
+                [(LLNavigationItem *)rootViewController.navigationItem setNavigationBar:bar];
+            }
         }
     }];
 //    NSLog(@"%@", NSStringFromSelector(_cmd));
 }
 + (void)navigationController:(UINavigationController *)navigationController setViewControllers:(NSArray<__kindof UIViewController *> *)viewControllers {
     [viewControllers enumerateObjectsUsingBlock:^(UIViewController * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        LLNavigationBar *bar = [obj valueForKey:@"navigationBar"];
-        if (!bar.superview) {
-            [obj.view addSubview:bar];
-            
+        UIViewController *rootViewController = obj;
+        if (obj.class == [LLNavigationComponent contributeViewController].class) {
+            LLNavigationBar *bar = [rootViewController valueForKey:@"navigationBar"];
+            if (!bar.superview) {
+                [rootViewController.view addSubview:bar];
+                [bar applyConstraint];
+            }
+            if ([rootViewController.navigationItem isKindOfClass:[LLNavigationItem class]]) {
+                [(LLNavigationItem *)rootViewController.navigationItem setNavigationBar:bar];
+            }
         }
     }];
 //    NSLog(@"%@", NSStringFromSelector(_cmd));
 }
 
-+ (void)clearNavigationBar:(UINavigationBar *)bar {
++ (void)hiddenNavigationBar:(UINavigationBar *)bar {
     [bar setTranslucent:YES];
     [bar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
     bar.shadowImage = [UIImage new];
     bar.subviews.firstObject.alpha = 0.f;
+    bar.hidden = YES;
+    
 }
 @end

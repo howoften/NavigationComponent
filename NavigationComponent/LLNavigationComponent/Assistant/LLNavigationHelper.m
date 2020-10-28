@@ -51,4 +51,12 @@
     return image;
 }
 
++ (BOOL)instanceClass:(NSObject *)anObject isEqualTo:(NSObject *)anotherObject {
+    if (anObject == nil || anotherObject == nil) {
+        return nil;
+    }
+    NSString *type1 = [NSStringFromClass(anObject.class) componentsSeparatedByString:@"."].lastObject;
+    NSString *type2 = [NSStringFromClass(anotherObject.class) componentsSeparatedByString:@"."].lastObject;
+    return [type1 isEqualToString:type2];
+}
 @end

@@ -13,8 +13,8 @@
 
 //一下方法在 base-navigationcontroller  - viewDidLoad中调用
 //可选
-+ (void)enablePopGestureRecongnizerAndProtectRootViewControllerPopAction:(UINavigationController *_Nonnull)navigationController;
++ (void)enablePopGestureRecongnizerAndProhibitRootViewControllerPopAction:(UINavigationController *_Nonnull)navigationController;
 //必须
-+ (void)protectRootViewControllerPopAction:(UINavigationController *_Nonnull)navigationController;
++ (void)prohibitRootViewControllerPopAction:(UINavigationController *_Nonnull)navigationController;
 
 @end

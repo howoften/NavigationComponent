@@ -8,13 +8,15 @@
 
 #import <UIKit/UIKit.h>
 #import "LLNavigationBar.h"
+#import "LLNavigationItem.h"
 @interface UIViewController(NavigationBar)
 @property (nonatomic, strong, readonly)LLNavigationBar * navigationBar;
+@property (nonatomic, strong, readonly)LLNavigationItem * navigationItem;
 
 @property (nonatomic, assign)BOOL enablePopGesture;
 @property (nonatomic, strong, readonly)UIViewController * forwardViewController;
 @property (nonatomic, strong, readonly)UIViewController * backwardViewController;
-
+- (UIView *)controllersView;
 @end
 
 @protocol LLNavigationActionProtocol <NSObject>

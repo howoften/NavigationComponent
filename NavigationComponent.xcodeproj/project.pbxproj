@@ -23,6 +23,10 @@
 		2D16D7372394E73600181484 /* LLNavigationPerformance.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D16D7362394E73600181484 /* LLNavigationPerformance.m */; };
 		2D16D73A2394E7F200181484 /* LLNavigationAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D16D7392394E7F200181484 /* LLNavigationAnimator.m */; };
 		2D16D73E2395F3D600181484 /* LLNavigationInteractivePop.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D16D73D2395F3D600181484 /* LLNavigationInteractivePop.m */; };
+		2D6F5E192546B38B00BABD4F /* LLChildControllerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6F5E182546B38B00BABD4F /* LLChildControllerView.m */; };
+		2D6F5E1D2546D63A00BABD4F /* LLNavigationItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D6F5E1C2546D63A00BABD4F /* LLNavigationItemView.m */; };
+		2D7DAC49254807770070CCC8 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D7DAC48254807770070CCC8 /* ViewController.xib */; };
+		2D9A795B2540215D00BFB30E /* LLNavigationItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D9A795A2540215D00BFB30E /* LLNavigationItem.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +62,13 @@
 		2D16D7392394E7F200181484 /* LLNavigationAnimator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LLNavigationAnimator.m; sourceTree = "<group>"; };
 		2D16D73C2395F3D600181484 /* LLNavigationInteractivePop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LLNavigationInteractivePop.h; sourceTree = "<group>"; };
 		2D16D73D2395F3D600181484 /* LLNavigationInteractivePop.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LLNavigationInteractivePop.m; sourceTree = "<group>"; };
+		2D6F5E172546B38B00BABD4F /* LLChildControllerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LLChildControllerView.h; sourceTree = "<group>"; };
+		2D6F5E182546B38B00BABD4F /* LLChildControllerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LLChildControllerView.m; sourceTree = "<group>"; };
+		2D6F5E1B2546D63A00BABD4F /* LLNavigationItemView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LLNavigationItemView.h; sourceTree = "<group>"; };
+		2D6F5E1C2546D63A00BABD4F /* LLNavigationItemView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LLNavigationItemView.m; sourceTree = "<group>"; };
+		2D7DAC48254807770070CCC8 /* ViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ViewController.xib; sourceTree = "<group>"; };
+		2D9A79592540215D00BFB30E /* LLNavigationItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LLNavigationItem.h; sourceTree = "<group>"; };
+		2D9A795A2540215D00BFB30E /* LLNavigationItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LLNavigationItem.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +106,7 @@
 				2D16D6C323920DC400181484 /* AppDelegate.m */,
 				2D16D6C823920DC400181484 /* ViewController.h */,
 				2D16D6C923920DC400181484 /* ViewController.m */,
+				2D7DAC48254807770070CCC8 /* ViewController.xib */,
 				2D16D6DD23922F1800181484 /* NavigationController.h */,
 				2D16D6DE23922F1800181484 /* NavigationController.m */,
 				2D16D6CB23920DC400181484 /* Main.storyboard */,
@@ -126,8 +138,14 @@
 			children = (
 				2D16D6E32392AC7100181484 /* LLNavigationBar.h */,
 				2D16D6E42392AC7100181484 /* LLNavigationBar.m */,
+				2D6F5E1B2546D63A00BABD4F /* LLNavigationItemView.h */,
+				2D6F5E1C2546D63A00BABD4F /* LLNavigationItemView.m */,
 				2D16D6F52393752200181484 /* LLNavigationApperance.h */,
 				2D16D6F62393752200181484 /* LLNavigationApperance.m */,
+				2D9A79592540215D00BFB30E /* LLNavigationItem.h */,
+				2D9A795A2540215D00BFB30E /* LLNavigationItem.m */,
+				2D6F5E172546B38B00BABD4F /* LLChildControllerView.h */,
+				2D6F5E182546B38B00BABD4F /* LLChildControllerView.m */,
 			);
 			path = NavigationBar;
 			sourceTree = "<group>";
@@ -216,6 +234,7 @@
 			files = (
 				2D16D6D223920DC500181484 /* LaunchScreen.storyboard in Resources */,
 				2D16D6CF23920DC500181484 /* Assets.xcassets in Resources */,
+				2D7DAC49254807770070CCC8 /* ViewController.xib in Resources */,
 				2D16D6CD23920DC400181484 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -229,9 +248,12 @@
 			files = (
 				2D16D7372394E73600181484 /* LLNavigationPerformance.m in Sources */,
 				2D16D6CA23920DC400181484 /* ViewController.m in Sources */,
+				2D9A795B2540215D00BFB30E /* LLNavigationItem.m in Sources */,
+				2D6F5E1D2546D63A00BABD4F /* LLNavigationItemView.m in Sources */,
 				2D16D6E92392B27E00181484 /* LLMehodSwizzle.m in Sources */,
 				2D16D6F72393752200181484 /* LLNavigationApperance.m in Sources */,
 				2D16D6E52392AC7100181484 /* LLNavigationBar.m in Sources */,
+				2D6F5E192546B38B00BABD4F /* LLChildControllerView.m in Sources */,
 				2D16D6DF23922F1800181484 /* NavigationController.m in Sources */,
 				2D16D6C423920DC400181484 /* AppDelegate.m in Sources */,
 				2D16D73E2395F3D600181484 /* LLNavigationInteractivePop.m in Sources */,
@@ -380,8 +402,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = VSU3CW8QUS;
+				DEVELOPMENT_TEAM = RJ9SHE83UJ;
 				INFOPLIST_FILE = NavigationComponent/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -397,8 +420,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = VSU3CW8QUS;
+				DEVELOPMENT_TEAM = RJ9SHE83UJ;
 				INFOPLIST_FILE = NavigationComponent/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

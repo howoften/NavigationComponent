@@ -15,15 +15,12 @@
 + (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC
 {
     if ((toVC.modal == 1 && operation == UINavigationControllerOperationPush) || (fromVC.modal == 1 && operation == UINavigationControllerOperationPop)) {
-        if (toVC.modal == 1) {
-            [toVC.navigationItem setHidesBackButton:YES];
-        }
-        return [LLNavigationAnimator new];
+//        if (toVC.modal == 1) {
+//            [toVC.navigationItem setHidesBackButton:YES];
+//        }
+        return operation == UINavigationControllerOperationPop ? [LLNavigationAnimator popAnimator] : [LLNavigationAnimator pushAnimator];
     }
-    if (!toVC.navigationItem.hidesBackButton) {
-        fromVC.navigationItem.backBarButtonItem = [UIBarButtonItem new];
-    }
-
+   
     return nil;
 }
 

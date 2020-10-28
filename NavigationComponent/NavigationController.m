@@ -18,9 +18,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
-    
-    [LLNavigationComponent enablePopGestureRecongnizerAndProtectRootViewControllerPopAction:self];
-//    [LLNavigationComponent protectRootViewControllerPopAction:self];
+    [LLNavigationComponent enablePopGestureRecongnizerAndProhibitRootViewControllerPopAction:self];
+//    [LLNavigationComponent prohibitRootViewControllerPopAction:self];
 }
 
 /*

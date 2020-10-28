@@ -8,8 +8,21 @@
 
 #import "LLNavigationAnimator.h"
 #import "LLNavigationHelper.h"
-//#import "LLNavigationPrivate-Header.h"
+@interface LLNavigationAnimator()
+@property (nonatomic, assign)BOOL isPop;
+@end
+
 @implementation LLNavigationAnimator
++ (instancetype)popAnimator {
+    LLNavigationAnimator *animator = [[LLNavigationAnimator alloc] init];
+    animator.isPop = YES;
+    return animator;
+}
++ (instancetype)pushAnimator {
+    LLNavigationAnimator *animator = [[LLNavigationAnimator alloc] init];
+    animator.isPop = NO;
+    return animator;
+}
 - (NSTimeInterval)transitionDuration:(id<UIViewControllerContextTransitioning>)transitionContext
 {
     return 0.3;
@@ -45,7 +58,7 @@
     // If a push is being animated, the incoming view controller will have a
     // higher index on the navigation stack than the current top view
     // controller.
-    BOOL isPop = !([toViewController.navigationController.viewControllers indexOfObject:toViewController] > [fromViewController.navigationController.viewControllers indexOfObject:fromViewController]) || !fromViewController.navigationController;
+    BOOL isPop = self.isPop;
     
     if (fromViewController.navigationController.viewControllers.count == 2 && !isPop) {
         for (UIView *sub in containerView.subviews) {
@@ -56,35 +69,40 @@
     }
     
     
+    if (!fromView.superview) {
+        [containerView addSubview:fromView];
+    }
+    //        [fromView removeFromSuperview];
+    [containerView addSubview:toView];
     if (!isPop) {
-        UIImageView *snapshot = [LLNavigationAnimator snapshotForViewController:fromViewController];
-        [containerView addSubview:snapshot];
-        [fromView removeFromSuperview];
-        [containerView addSubview:toView];
-        
+//        UIImageView *snapshot = [LLNavigationAnimator snapshotForViewController:fromViewController];
+        [containerView bringSubviewToFront:toView];
         toView.transform = CGAffineTransformMakeTranslation(0, CGRectGetHeight(containerView.frame)-CGRectGetMinY(fromView.frame));
         CATransform3D fold = CATransform3DIdentity;
         fold.m34 = 1.0/-600;
         fold = CATransform3DScale(fold, 0.95, 0.95, 1);
         
-        snapshot.layer.zPosition = -1000.f;
+        fromView.layer.zPosition = -1000.f;
         [UIView animateWithDuration:[self transitionDuration:transitionContext]/2 animations:^{
-            snapshot.layer.transform = fold;
+            fromView.layer.transform = fold;
         } completion:nil];
 
         [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
             toView.transform = CGAffineTransformIdentity;
         } completion:^(BOOL finished) {
             [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-
+            fromView.layer.transform = CATransform3DIdentity;
+            [fromView removeFromSuperview];
         }];
     }else {
-        [self positionSnapshotViewFrom:toViewController inView:containerView];
-        UIImageView *snapshot = [self findSnapshotFrom:toViewController inView:containerView];
-//        [containerView insertSubview:toView belowSubview:snapshot];
+        [containerView insertSubview:toView belowSubview:fromView];
+        CATransform3D fold = CATransform3DIdentity;
+        fold.m34 = 1.0/-600;
+        fold = CATransform3DScale(fold, 0.95, 0.95, 1);
+        toView.layer.transform = fold;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)([self transitionDuration:transitionContext]/2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
              [UIView animateWithDuration:[self transitionDuration:transitionContext]/2 animations:^{
-                 snapshot.layer.transform = CATransform3DIdentity;
+                 toView.layer.transform = CATransform3DIdentity;
              } completion:^(BOOL finished) {
              }];
          });
@@ -92,10 +110,10 @@
          [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
              fromView.transform = CGAffineTransformMakeTranslation(0, CGRectGetHeight(containerView.frame)-CGRectGetMinY(fromView.frame));;
          } completion:^(BOOL finished) {
-             [containerView addSubview:toView];
-             [snapshot removeFromSuperview];
+//             [containerView addSubview:toView];
+//             [snapshot removeFromSuperview];
              [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-
+             [fromView removeFromSuperview];
          }];
         
     }

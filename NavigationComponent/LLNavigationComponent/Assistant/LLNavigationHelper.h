@@ -13,4 +13,5 @@
 + (UIViewController *)topViewController;
 + (UIImage *)shotWithView:(UIView *)view;
 + (UIImage *)shotWithView:(UIView *)view scope:(CGRect)scope;
++ (BOOL)instanceClass:(NSObject *)anObject isEqualTo:(NSObject *)anotherObject;
 @end

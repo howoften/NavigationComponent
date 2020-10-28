@@ -12,14 +12,18 @@
 #import "LLNavigationApperance.h"
 #import "LLNavigationAction.h"
 #import "LLNavigationPerformance.h"
+#import "LLNavigationItem.h"
+#import "LLChildControllerView.h"
 
 @interface LLNavigationComponent ()
-@property (nonatomic, strong)id standard_viewcontroller;
-@property (nonatomic, strong)id standard_navigationcontroller;
+@property (nonatomic, strong)UIViewController *standard_viewcontroller;
+@property (nonatomic, strong)UINavigationController *standard_navigationcontroller;
 @property (nonatomic, strong)NSPointerArray *delegates;
 @property (nonatomic, strong)NSMutableDictionary *popGestures;
-
-@property (nonatomic, strong)id<UINavigationControllerDelegate> navigationDelegat;
+@property (nonatomic, strong)NSMapTable *navigationItems;
+@property (nonatomic, strong)NSMapTable *replacedViews;
+@property (nonatomic, strong)LLNavigationClass<UINavigationControllerDelegate> *navigationDelegate;
+@property (nonatomic, strong)LLControllerClass *controllerDelegate;
 @end
 
 static LLNavigationComponent *component = nil;
@@ -30,7 +34,10 @@ static LLNavigationComponent *component = nil;
         component = [[LLNavigationComponent alloc] init];
         component.delegates = [NSPointerArray weakObjectsPointerArray];
         component.popGestures = [NSMutableDictionary dictionaryWithCapacity:0];
-        component.navigationDelegat = [LLNavigationClass new];
+        component.navigationDelegate = [LLNavigationClass new];
+        component.controllerDelegate = [LLControllerClass new];
+        component.navigationItems = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsCopyIn valueOptions:NSPointerFunctionsWeakMemory];
+        component.replacedViews = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsCopyIn valueOptions:NSPointerFunctionsWeakMemory];
         [component addNavigationNewChildElementDelegate:(id<LLNavigationPrivateProtocol>)LLNavigationApperance.class];
         [component addNavigationNewChildElementDelegate:(id<LLNavigationPrivateProtocol>)LLNavigationAction.class];
     });
@@ -45,13 +52,14 @@ static LLNavigationComponent *component = nil;
     [self share].standard_navigationcontroller = nav_entity;
     
     [self swizzlingForStandaredNavigationController:nav_entity];
+    [self swizzlingForStandaredViewController:vc_entity];
 }
 
-+ (void)enablePopGestureRecongnizerAndProtectRootViewControllerPopAction:(UINavigationController *_Nonnull)navigationController {
++ (void)enablePopGestureRecongnizerAndProhibitRootViewControllerPopAction:(UINavigationController *_Nonnull)navigationController {
     [LLNavigationAction.class navigationController:navigationController enablePopGesture:YES];
 }
 
-+ (void)protectRootViewControllerPopAction:(UINavigationController *_Nonnull)navigationController {
++ (void)prohibitRootViewControllerPopAction:(UINavigationController *_Nonnull)navigationController {
     [LLNavigationAction.class navigationController:navigationController enablePopGesture:NO];
 }
 
@@ -71,6 +79,13 @@ static LLNavigationComponent *component = nil;
     [LLMehodSwizzle swizzleForClass:navigationController.class originSEL:@selector(setDelegate:) anotherClass:[LLNavigationClass class] newSEL:@selector(setDelegate:)];
 //    [LLMehodSwizzle swizzleForClass:navigationController.class originSEL:@selector(viewDidLoad) anotherClass:[LLNavigationClass class] newSEL:@selector(viewDidLoad)];
     [LLMehodSwizzle swizzleForClass:navigationController.class originSEL:@selector(interactivePopGestureRecognizer) anotherClass:[LLNavigationClass class] newSEL:@selector(interactivePopGestureRecognizer)];
+//    [LLMehodSwizzle swizzleForClass:navigationController.class originSEL:@selector(navigationBar) anotherClass:[LLNavigationClass class] newSEL:@selector(navigationBar)];
+    
+}
+
++ (void)swizzlingForStandaredViewController:(UIViewController *_Nonnull)viewController {
+    [LLMehodSwizzle swizzleForClass:viewController.class originSEL:@selector(navigationItem) anotherClass:[LLControllerClass class] newSEL:@selector(navigationItem)];
+    [LLMehodSwizzle swizzleForClass:viewController.class originSEL:@selector(loadView) anotherClass:[LLControllerClass class] newSEL:@selector(loadView)];
 }
 
 + (UIViewController *)contributeViewController {
@@ -107,38 +122,46 @@ static LLNavigationComponent *component = nil;
 @implementation LLNavigationClass
 - (instancetype)initWithRootViewController:(UIViewController *)rootViewController {
     id nav = [super initWithRootViewController:rootViewController];
-    for (id element in component.delegates) {
-        if ([element respondsToSelector:@selector(navigationController:initWithRootViewController:)]) {
-            [[element class] navigationController:self initWithRootViewController:rootViewController];
+    if ([self isKindOfClass:[component.standard_navigationcontroller class]]) {
+        for (id element in component.delegates) {
+            if ([element respondsToSelector:@selector(navigationController:initWithRootViewController:)]) {
+                [[element class] navigationController:self initWithRootViewController:rootViewController];
+            }
         }
+        [(UINavigationController *)nav setDelegate:component.navigationDelegate];
     }
-    [(UINavigationController *)nav setDelegate:component.navigationDelegat];
     return nav;
 }
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {
     id nav =  [super initWithCoder:aDecoder];
-    for (id element in component.delegates) {
-        if ([element respondsToSelector:@selector(navigationController:initWithCoder:)]) {
-            [[element class] navigationController:self initWithCoder:aDecoder];
+    if ([self isKindOfClass:[component.standard_navigationcontroller class]]) {
+        for (id element in component.delegates) {
+            if ([element respondsToSelector:@selector(navigationController:initWithCoder:)]) {
+                [[element class] navigationController:self initWithCoder:aDecoder];
+            }
         }
+        [nav setDelegate:component.navigationDelegate];
     }
-    [nav setDelegate:component.navigationDelegat];
     return nav;
 }
 
 - (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
-    for (id element in component.delegates) {
-        if ([element respondsToSelector:@selector(navigationController:pushViewController:animated:)]) {
-            [[element class] navigationController:self pushViewController:viewController animated:animated];
+    if ([self isKindOfClass:[component.standard_navigationcontroller class]]) {
+        for (id element in component.delegates) {
+            if ([element respondsToSelector:@selector(navigationController:pushViewController:animated:)]) {
+                [[element class] navigationController:self pushViewController:viewController animated:animated];
+            }
         }
     }
     [super pushViewController:viewController animated:animated];
 }
 
 - (void)presentViewController:(UIViewController *)viewControllerToPresent animated: (BOOL)flag completion:(void (^)(void))completion {
-    for (id element in component.delegates) {
-        if ([element respondsToSelector:@selector(navigationController:presentViewController:animated:completion:)]) {
-            [[element class] navigationController:self presentViewController:viewControllerToPresent animated:flag completion:completion];
+    if ([self isKindOfClass:[component.standard_navigationcontroller class]]) {
+        for (id element in component.delegates) {
+            if ([element respondsToSelector:@selector(navigationController:presentViewController:animated:completion:)]) {
+                [[element class] navigationController:self presentViewController:viewControllerToPresent animated:flag completion:completion];
+            }
         }
     }
     [super presentViewController:viewControllerToPresent animated:flag completion:completion];
@@ -165,18 +188,23 @@ static LLNavigationComponent *component = nil;
 }
 
 - (void)setViewControllers:(NSArray<UIViewController *> *)viewControllers animated:(BOOL)animated {
-    for (id element in component.delegates) {
-        if ([element respondsToSelector:@selector(setViewControllers:animated:)]) {
-            [[element class] navigationController:self setViewControllers:viewControllers animated:animated];
+    if ([self isKindOfClass:[component.standard_navigationcontroller class]]) {
+        for (id element in component.delegates) {
+            if ([element respondsToSelector:@selector(setViewControllers:animated:)]) {
+                [[element class] navigationController:self setViewControllers:viewControllers animated:animated];
+            }
         }
+        
     }
     [super setViewControllers:viewControllers animated:animated];
 }
 
 - (void)setViewControllers:(NSArray<__kindof UIViewController *> *)viewControllers{
-    for (id element in component.delegates) {
-        if ([element respondsToSelector:@selector(navigationController:setViewControllers:)]) {
-            [[element class] navigationController:self setViewControllers:viewControllers];
+    if ([self isKindOfClass:[component.standard_navigationcontroller class]]) {
+        for (id element in component.delegates) {
+            if ([element respondsToSelector:@selector(navigationController:setViewControllers:)]) {
+                [[element class] navigationController:self setViewControllers:viewControllers];
+            }
         }
     }
     [super setViewControllers:viewControllers];
@@ -203,6 +231,46 @@ static LLNavigationComponent *component = nil;
     UIGestureRecognizer *gesture = [super interactivePopGestureRecognizer];
     [component.popGestures setObject:gesture forKey:[NSString stringWithFormat:@"%lx", (unsigned long)self.hash]];
     return nil;
+}
+
+@end
+
+@implementation LLControllerClass
+
+- (UINavigationItem *)navigationItem {
+    
+    LLNavigationItem *item = self.navigationItem_t;
+    if (![item isKindOfClass:[LLNavigationItem class]]) {
+        item = component.controllerDelegate.navigationItem_t;
+        self.navigationItem_t = item;
+        
+    }
+    return item;
+}
+- (UIView *)controllersView{ return nil;}
+- (void)loadView {
+    UIView *view = nil;
+    if ([self respondsToSelector:@selector(controllersView)]) {
+        view = [self controllersView];
+    }
+    self.view = [LLChildControllerView new];
+    self.view.backgroundColor = [UIColor whiteColor];
+    
+    if (!view) {
+        return;
+    }
+    view.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:view];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
+    return;
+}
+- (LLNavigationItem *)navigationItem_t {
+    _navigationItem_t = [[LLNavigationItem alloc] init];
+    _navigationItem_t.viewController = self;
+    return _navigationItem_t;
 }
 
 @end

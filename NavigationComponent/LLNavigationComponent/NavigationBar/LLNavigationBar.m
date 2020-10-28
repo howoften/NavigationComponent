@@ -9,144 +9,225 @@
 #import <objc/runtime.h>
 #import "LLNavigationBar.h"
 #import "LLNavigationPrivate-Header.h"
-//#import "LLNavigationPublic-Header.h"
+#import "LLNavigationItemView.h"
+#import "LLNavigationHelper.h"
 
 @interface LLNavigationBar ()
-@property (nonatomic, strong)CAShapeLayer *separateLine;
-@property (nonatomic, strong)UIVisualEffectView *backMaskView;
+@property (nonatomic, strong)UIImageView *barBackgroundView;
+@property (nonatomic, strong)UIView *barContentView;
+@property (nonatomic, strong)UIVisualEffectView *blurView;
 
-@property (nonatomic, strong)NSNumber *constantHeight;
-@property (nonatomic, strong)NSNumber *height;
+@property (nonatomic, strong)UIView *borderLine;
 
-@property (nonatomic, assign)BOOL immutable;
+@property (nonatomic, weak)LLNavigationItemView *defaultTitleView;
+@property (nonatomic, weak)LLNavigationItemView *defaultLeftView;
+@property (nonatomic, weak)LLNavigationItemView *defaultRightView;
+
+@property (nonatomic, strong)UIColor *backgroundColor_;
+
 @end
 
+LLNavigationBarSeparatorStyleKey const LLNavigationBarSeparatorStyleNone = @"LLNavigationBarSeparatorStyle.Key.None";
+LLNavigationBarSeparatorStyleKey const LLNavigationBarSeparatorStyleLine = @"LLNavigationBarSeparatorStyle.Key.Line";
+LLNavigationBarSeparatorStyleKey const LLNavigationBarSeparatorStyleShadow = @"LLNavigationBarSeparatorStyle.Key.Shadow";
 @implementation LLNavigationBar
-
-- (instancetype)initWithBarHeight:(CGFloat)height {
+- (instancetype)init
+{
     self = [super init];
     if (self) {
-        self.height = @(height);
-        [self _init];
+        [self construct];
+        self.separatorStyle = LLNavigationBarSeparatorStyleLine;
+        self.separatorColor = [UIColor colorWithWhite:0.2 alpha:1];
     }
     return self;
 }
-
-
-
 - (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
-        self.height = @(frame.size.height);
-        [self _init];
+    if (self = [super initWithFrame:frame]) {
+        [self construct];
+        self.separatorStyle = LLNavigationBarSeparatorStyleLine;
+        self.separatorColor = [UIColor colorWithWhite:0.2 alpha:1];
     }
     return self;
 }
+- (void)setSeparatorColor:(UIColor *)separatorColor {
+    if (CGColorEqualToColor(separatorColor.CGColor, _separatorColor.CGColor)) {
+        return;
+    }
+    _separatorColor = separatorColor;
+    if ([_separatorStyle isEqualToString:LLNavigationBarSeparatorStyleLine]) {
+        self.borderLine.backgroundColor = separatorColor;
+        
+    }else if ([_separatorStyle isEqualToString:LLNavigationBarSeparatorStyleShadow]) {
+        self.barBackgroundView.layer.shadowColor = separatorColor.CGColor;
+
+    }
+    
+}
+
+- (void)setSeparatorStyle:(LLNavigationBarSeparatorStyleKey)separatorStyle {
+    _separatorStyle = separatorStyle;
+    self.borderLine.hidden = ![separatorStyle isEqualToString:LLNavigationBarSeparatorStyleLine];
+    if ([_separatorStyle isEqualToString:LLNavigationBarSeparatorStyleShadow]) {
+        self.barBackgroundView.layer.shadowColor = self.separatorColor.CGColor;
+        self.barBackgroundView.layer.shadowOffset = CGSizeMake(0, 3);
+        self.barBackgroundView.layer.shadowRadius = 3;
+        self.barBackgroundView.layer.shadowOpacity = 0.7;
+    }else {
+        self.barBackgroundView.layer.shadowColor = [UIColor clearColor].CGColor;
+        self.barBackgroundView.layer.shadowOffset = CGSizeMake(0, 0);
+        self.barBackgroundView.layer.shadowRadius = 0;
+        self.barBackgroundView.layer.shadowOpacity = 0;
+    }
+    
+}
+
 - (void)setBackgroundColor:(UIColor *)backgroundColor {
-    if (!_immutable) {
-        [super setBackgroundColor:backgroundColor];
-        
-        [_backMaskView removeFromSuperview];
+    self.backgroundColor_ = backgroundColor;
+    self.barBackgroundView.backgroundColor = backgroundColor;
+    self.barBackgroundView.image = nil;
+    self.blurView.hidden = YES;
+}
+- (UIColor *)backgroundColor {
+    return self.backgroundColor_;
+}
+- (void)setBackgroundImage:(UIImage *)backgroundImage {
+    self.barBackgroundView.image = backgroundImage;
+    self.barBackgroundView.backgroundColor = nil;
+    self.blurView.hidden = YES;
+}
+- (void)construct {
+    if (self.barBackgroundView) {
+        return;
     }
+    self.barBackgroundView = [[UIImageView alloc] init];
+    [self addSubview:self.barBackgroundView];
+    self.barBackgroundView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.barBackgroundView.backgroundColor = [UIColor colorWithWhite:0.95 alpha:0.8];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.barBackgroundView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.barBackgroundView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.barBackgroundView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
+    [self.barBackgroundView addConstraint:[NSLayoutConstraint constraintWithItem:self.barBackgroundView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:44+[self statusBarHeight]]];
+    
+    UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+    self.blurView = [[UIVisualEffectView alloc] initWithEffect:effect];
+    [self addSubview:self.blurView];
+    self.blurView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.blurView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.barBackgroundView attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.blurView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.barBackgroundView attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.blurView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.barBackgroundView attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.blurView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.barBackgroundView attribute:NSLayoutAttributeTop multiplier:1 constant:0]];
+    
+    self.barContentView = [UIView new];
+    [self addSubview:self.barContentView];
+    self.barContentView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.barContentView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.barContentView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.barContentView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
+    [self.barContentView addConstraint:[NSLayoutConstraint constraintWithItem:self.barContentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:44]];
+    
+    LLNavigationItemView *leftItem = [LLNavigationItemView sideItemView];
+    [self.barContentView addSubview:leftItem];
+    leftItem.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.barContentView addConstraint:[NSLayoutConstraint constraintWithItem:leftItem attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.barContentView attribute:NSLayoutAttributeLeft multiplier:1 constant:8]];
+    [self.barContentView addConstraint:[NSLayoutConstraint constraintWithItem:leftItem attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.barContentView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+    
+    LLNavigationItemView *titleItem = [LLNavigationItemView titleItemView];
+    [self.barContentView addSubview:titleItem];
+    titleItem.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.barContentView addConstraint:[NSLayoutConstraint constraintWithItem:titleItem attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self.barContentView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+    [self.barContentView addConstraint:[NSLayoutConstraint constraintWithItem:titleItem attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.barContentView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+    [self.barContentView addConstraint:[NSLayoutConstraint constraintWithItem:titleItem attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:leftItem attribute:NSLayoutAttributeRight multiplier:1 constant:11]];
+    
+    LLNavigationItemView *rightItem = [LLNavigationItemView sideItemView];
+    [self.barContentView addSubview:rightItem];
+    rightItem.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.barContentView addConstraint:[NSLayoutConstraint constraintWithItem:rightItem attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.barContentView attribute:NSLayoutAttributeRight multiplier:1 constant:-8]];
+    [self.barContentView addConstraint:[NSLayoutConstraint constraintWithItem:rightItem attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.barContentView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+    [self.barContentView addConstraint:[NSLayoutConstraint constraintWithItem:rightItem attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:titleItem attribute:NSLayoutAttributeRight multiplier:1 constant:11]];
+    
+    self.borderLine = [UIView new];
+    [self addSubview:self.borderLine];
+    self.borderLine.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.borderLine attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.borderLine attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.borderLine attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
+    [self.borderLine addConstraint:[NSLayoutConstraint constraintWithItem:self.borderLine attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:0.7]];
+    
+    self.defaultTitleView = titleItem;
+    self.defaultLeftView = leftItem;
+    self.defaultRightView = rightItem;
 }
 
-- (void)setImage:(UIImage *)image {
-    if (!_immutable) {
-        [super setImage:image];
-        
-        [_backMaskView removeFromSuperview];
-    }
-}
-
-- (void)_init {
-    self.frame = CGRectZero;
-    self.showNavigationBarShadow = YES;
-    [self addSubview:self.backMaskView];
-    self.immutable = NO;
-    self.layer.zPosition = 100000000L;
-    if (!self.height) {
-        self.height = @(44.f);
-    }
-//    self.clipsToBounds = NO;
+- (void)applyConstraint {
+    self.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    [self.superview addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.superview attribute:NSLayoutAttributeTop multiplier:1 constant:[self statusBarHeight]]];
+    [self.superview addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.superview attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
+    [self.superview addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.superview attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:44]];
     
 }
-
-- (void)setFrame:(CGRect)frame {
-    CGRect informal = frame;
-    informal.origin.x = 0;
-    informal.origin.y = 0;
-    informal.size.width = CGRectGetWidth([UIScreen mainScreen].bounds);
-    informal.size.height = self.constantHeight!=nil?self.constantHeight.floatValue: self.height.floatValue+(CGRectGetHeight([UIApplication sharedApplication].statusBarFrame)==40?20:CGRectGetHeight([UIApplication sharedApplication].statusBarFrame));
-
-    [super setFrame:informal];
-
-}
-
-- (void)setConstantHeight:(NSNumber *)constantHeight {
-    _constantHeight = constantHeight;
-    [self setFrame:CGRectZero];
-    self.backMaskView.frame = self.bounds;
-    [self setShowNavigationBarShadow:_showNavigationBarShadow];
-}
-
-- (void)setShowNavigationBarShadow:(BOOL)showNavigationBarShadow {
-    
-//    if (_showNavigationBarShadow != showNavigationBarShadow) {
-        if (showNavigationBarShadow) {
-            [self setShowNavigationBarSeparator:NO];
-            self.layer.shadowColor = [UIColor colorWithRed:203/255.f green:203/255.f blue:203/255.f alpha:1].CGColor;
-            self.layer.shadowOffset = CGSizeMake(0, 3);
-            self.layer.shadowRadius = 3;
-            self.layer.shadowOpacity = 0.7;
-
-            [self.layer setShadowPath:[[UIBezierPath bezierPathWithRect:self.bounds] CGPath]];
-        }else {
-            [self.layer setShadowPath:[[UIBezierPath bezierPathWithRect:CGRectZero] CGPath]];
+- (CGFloat)statusBarHeight {
+    if (@available(iOS 11.0, *)) {
+        if ([UIApplication sharedApplication].delegate.window.safeAreaInsets.bottom > 0) {
+            return 44;
         }
-        [self setNeedsDisplay];
-//    }
-    _showNavigationBarShadow = showNavigationBarShadow;
-}
-
-- (void)setShowNavigationBarSeparator:(BOOL)showNavigationBarSeparator {
-        if (showNavigationBarSeparator) {
-            [self setShowNavigationBarShadow:NO];
-            [_separateLine removeFromSuperlayer];
-            _separateLine = nil;
-            
-            [self.layer addSublayer:self.separateLine];
-        }else {
-            [_separateLine removeFromSuperlayer];
-        }
-        [self setNeedsDisplay];
-    _showNavigationBarSeparator = showNavigationBarSeparator;
-}
-
-- (UIVisualEffectView *)backMaskView {
-    if (!_backMaskView) {
-        self.backgroundColor = [UIColor colorWithWhite:1 alpha:0.3];
-        UIBlurEffect *blur = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
-        _backMaskView = [[UIVisualEffectView alloc] initWithEffect:blur];
     }
-    _backMaskView.frame = self.bounds;
-    return _backMaskView;
+    return 20;
 }
-
-- (CAShapeLayer *)separateLine {
-    if (!_separateLine) {
-        UIBezierPath *line = [UIBezierPath bezierPath];
-        [line moveToPoint:CGPointMake(0, CGRectGetHeight(self.frame))];
-        [line addLineToPoint:CGPointMake(CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))];
-        [line closePath];
-        _separateLine = [CAShapeLayer layer];
-        _separateLine.frame = self.bounds;
-        [_separateLine setLineWidth:0.5/2];
-        [_separateLine setStrokeColor:[UIColor colorWithWhite:0 alpha:0.3].CGColor];
-        _separateLine.path = line.CGPath;
-    }
-    return _separateLine;
+- (void)setTitle:(NSString *)title {
+    self.defaultTitleView.title = title;
+}
+- (void)setSubTitle:(NSString *)subTitle {
+    self.defaultTitleView.subTitle = subTitle;
+}
+-(void)setLeftItemTitle:(NSString *)leftItemTitle {
+    self.defaultLeftView.title = leftItemTitle;
+}
+- (void)setLeftItemImage:(UIImage *)leftItemImage {
+    self.defaultLeftView.image = leftItemImage;
+}
+- (void)setRightItemTitle:(NSString *)rightItemTitle {
+    self.defaultRightView.title = rightItemTitle;
+}
+- (void)setRightItemImage:(UIImage *)rightItemImage {
+    self.defaultRightView.image = rightItemImage;
+}
+- (void)setTitleView:(UIView *)titleView {
+    [self.defaultTitleView setTitleView:titleView];
+}
+- (void)setLeftView:(UIView *)leftView {
+    [self.defaultLeftView setSideItemView:leftView];
+}
+- (void)setRightView:(UIView *)rightView {
+    [self.defaultRightView setSideItemView:rightView];
+}
+- (void)setLeftItemTextColor:(UIColor *)color forState:(UIControlState)state {
+    [self.defaultLeftView setTextColor:color forState:state];
+}
+- (void)setLeftItemTextFont:(UIFont *)font {
+    [self.defaultLeftView setTextFont:font];
+}
+- (void)setRightItemTextColor:(UIColor *)color forState:(UIControlState)state {
+    [self.defaultRightView setTextColor:color forState:state];
+}
+- (void)setRightItemTextFont:(UIFont *)font {
+    [self.defaultRightView setTextFont:font];
+}
+- (void)setTitleFont:(UIFont *)titleFont {
+    self.defaultTitleView.titleFont = titleFont;
+}
+- (void)setTitleColor:(UIColor *)titleColor {
+    self.defaultTitleView.titleColor = titleColor;
+}
+- (void)setSubTitleFont:(UIFont *)subTitleFont {
+    self.defaultTitleView.subTitleFont = subTitleFont;
+}
+- (void)setSubTitleColor:(UIColor *)subTitleColor {
+    self.defaultTitleView.subTitleColor = subTitleColor;
 }
 @end
+
 
 
 @interface UIViewController()
@@ -167,13 +248,14 @@ static const void *kEnableGestureKey = &kEnableGestureKey;
 
 - (LLNavigationBar *)navigationBar {
     LLNavigationBar *bar = objc_getAssociatedObject(self, &kNavigationBarKey);
-    if (!bar && self.navigationController.navigationBar) {
-        bar = [[LLNavigationBar alloc] initWithBarHeight:CGRectGetHeight(self.navigationController.navigationBar.frame)];
-        bar.immutable = ![self isKindOfClass:[LLNavigationComponent contributeViewController].class];
-
+    if (!bar) {
+        bar = [LLNavigationBar new];
         [self setNavigationBar:bar];
     }
-    return bar;
+    if ([LLNavigationHelper instanceClass:self isEqualTo:[LLNavigationComponent contributeViewController]]) {
+        return bar;
+    }
+    return nil;
 }
 
 - (UIViewController *)forwardViewController {//TODO 持有
@@ -231,12 +313,6 @@ static const void *kEnableGestureKey = &kEnableGestureKey;
     return [enable boolValue];
     
 }
-//- (BOOL)configed {
-//    return [objc_getAssociatedObject(self, &kConfigedKey) boolValue];
-//}
-//
-//- (void)setConfiged:(BOOL)configed {
-//    objc_setAssociatedObject(self, &kConfigedKey, @(configed), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-//}
+
 
 @end
