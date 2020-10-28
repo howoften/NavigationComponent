@@ -70,6 +70,7 @@ LLNavigationBarSeparatorStyleKey const LLNavigationBarSeparatorStyleShadow = @"L
     if ([_separatorStyle isEqualToString:LLNavigationBarSeparatorStyleShadow]) {
         self.barBackgroundView.layer.shadowColor = self.separatorColor.CGColor;
         self.barBackgroundView.layer.shadowOffset = CGSizeMake(0, 3);
+        self.barBackgroundView.layer.shadowPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 44+[self statusBarHeight])].CGPath;
         self.barBackgroundView.layer.shadowRadius = 3;
         self.barBackgroundView.layer.shadowOpacity = 0.7;
     }else {
