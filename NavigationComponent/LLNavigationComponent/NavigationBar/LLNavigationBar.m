@@ -227,6 +227,12 @@ LLNavigationBarSeparatorStyleKey const LLNavigationBarSeparatorStyleShadow = @"L
 - (void)setSubTitleColor:(UIColor *)subTitleColor {
     self.defaultTitleView.subTitleColor = subTitleColor;
 }
+- (void)addLeftViewTarget:(id)target action:(SEL)action forControlEvents:(UIControlEvents)controlEvents {
+    [self.defaultLeftView addTarget:target action:action forControlEvents:controlEvents];
+}
+- (void)addRightViewTarget:(id)target action:(SEL)action forControlEvents:(UIControlEvents)controlEvents {
+    [self.defaultRightView addTarget:target action:action forControlEvents:controlEvents];
+}
 @end
 
 
@@ -245,6 +251,7 @@ static const void *kEnableGestureKey = &kEnableGestureKey;
 
 - (void)setNavigationBar:(LLNavigationBar *)navigationBar {
     objc_setAssociatedObject(self, &kNavigationBarKey, navigationBar, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
 }
 
 - (LLNavigationBar *)navigationBar {

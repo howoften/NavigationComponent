@@ -8,8 +8,20 @@
 
 #import "LLNavigationItem.h"
 #import "LLNavigationBar.h"
-@interface LLNavigationItem()
 
+
+@interface LLTouchableInfoItem : NSObject
+@property (nonatomic, weak)id target;
+@property (nonatomic)SEL selector;
+@property (nonatomic)NSUInteger touchType;
+@end
+@implementation LLTouchableInfoItem
+
+@end
+
+@interface LLNavigationItem()
+@property(nonatomic, strong)LLTouchableInfoItem *leftTouchEventInfo;
+@property(nonatomic, strong)LLTouchableInfoItem *rightTouchEventInfo;
 @end
 
 @implementation LLNavigationItem
@@ -148,8 +160,38 @@
     if (self.rightItemTextColor) {
         [self.navigationBar setRightItemTextColor:self.rightItemTextColor forState:UIControlStateNormal];
     }
+    if (self.leftTouchEventInfo) {
+        [self addLeftViewTarget:self.leftTouchEventInfo.target action:self.leftTouchEventInfo.selector forControlEvents:self.leftTouchEventInfo.touchType];
+    }
+    if (self.rightTouchEventInfo) {
+        [self addRightViewTarget:self.rightTouchEventInfo.target action:self.rightTouchEventInfo.selector forControlEvents:self.rightTouchEventInfo.touchType];
+    }
+}
+
+- (void)addLeftViewTarget:(id)target action:(SEL)action forControlEvents:(UIControlEvents)controlEvents {
+    if (target != nil) {
+        [self.navigationBar addLeftViewTarget:target action:action forControlEvents:controlEvents];
+        if (self.navigationBar == nil) {
+            LLTouchableInfoItem *item = LLTouchableInfoItem.new;
+            item.target = target;
+            item.selector = action;
+            item.touchType = controlEvents;
+            self.leftTouchEventInfo = item;
+        }
+    }
     
-    
+}
+- (void)addRightViewTarget:(id)target action:(SEL)action forControlEvents:(UIControlEvents)controlEvents {
+    if (target != nil) {
+        [self.navigationBar addRightViewTarget:target action:action forControlEvents:controlEvents];
+        if (self.navigationBar == nil) {
+            LLTouchableInfoItem *item = LLTouchableInfoItem.new;
+            item.target = target;
+            item.selector = action;
+            item.touchType = controlEvents;
+            self.leftTouchEventInfo = item;
+        }
+    }
 }
 @end
 
@@ -164,3 +206,4 @@
 }
 
 @end
+

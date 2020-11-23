@@ -30,6 +30,9 @@
 @property (nonatomic, strong)UIColor *leftItemTextColor;
 @property (nonatomic, strong)UIFont *rightItemFont;
 @property (nonatomic, strong)UIColor *rightItemTextColor;
+
+- (void)addLeftViewTarget:(id)target action:(SEL)action forControlEvents:(UIControlEvents)controlEvents;
+- (void)addRightViewTarget:(id)target action:(SEL)action forControlEvents:(UIControlEvents)controlEvents;
 @end
 
 @interface UIViewController(navigationItem_t)

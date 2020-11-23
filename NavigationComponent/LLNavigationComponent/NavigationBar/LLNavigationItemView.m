@@ -137,6 +137,12 @@
 - (void)setSubTitleColor:(UIColor *)subTitleColor {
     self.subTitleLabel.textColor = subTitleColor;
 }
+- (void)addTarget:(nullable id)target action:(SEL)action forControlEvents:(UIControlEvents)controlEvents {
+    if (self.sideButton) {
+//        if (self.sideButton.titleLabel.text.length > 0 || self.sideButton.imageView.image.size.width > 0)
+        [self.sideButton addTarget:target action:action forControlEvents:controlEvents];
+    }
+}
 
 - (CGSize)intrinsicContentSize {
     return CGSizeMake(10, 10);

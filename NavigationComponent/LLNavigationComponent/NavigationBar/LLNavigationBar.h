@@ -37,5 +37,8 @@ extern LLNavigationBarSeparatorStyleKey const LLNavigationBarSeparatorStyleShado
 - (void)setLeftItemTextFont:(UIFont *)font;
 - (void)setRightItemTextColor:(UIColor *)color forState:(UIControlState)state;
 - (void)setRightItemTextFont:(UIFont *)font;
+
+- (void)addLeftViewTarget:(id)target action:(SEL)action forControlEvents:(UIControlEvents)controlEvents;
+- (void)addRightViewTarget:(id)target action:(SEL)action forControlEvents:(UIControlEvents)controlEvents;
 @end
 

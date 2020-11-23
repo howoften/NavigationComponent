@@ -24,6 +24,6 @@
 - (void)setSideItemView:(UIView *)view;
 - (void)setTextColor:(UIColor *)color forState:(UIControlState)state;
 - (void)setTextFont:(UIFont *)font;
-
+- (void)addTarget:(nullable id)target action:(SEL)action forControlEvents:(UIControlEvents)controlEvents;
 @end
 
