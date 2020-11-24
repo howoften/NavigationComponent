@@ -12,6 +12,7 @@
 @interface UIViewController(NavigationBar)
 @property (nonatomic, strong, readonly)LLNavigationBar * navigationBar;
 @property (nonatomic, strong, readonly)LLNavigationItem * navigationItem;
+- (void)setReplacedNavigationBar:(__kindof UIView *)replacedNavigationBar;
 
 @property (nonatomic, assign)BOOL enablePopGesture;
 @property (nonatomic, strong, readonly)UIViewController * forwardViewController;

@@ -70,7 +70,7 @@ LLNavigationBarSeparatorStyleKey const LLNavigationBarSeparatorStyleShadow = @"L
     if ([_separatorStyle isEqualToString:LLNavigationBarSeparatorStyleShadow]) {
         self.barBackgroundView.layer.shadowColor = self.separatorColor.CGColor;
         self.barBackgroundView.layer.shadowOffset = CGSizeMake(0, 3);
-        self.barBackgroundView.layer.shadowPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 44+[self statusBarHeight])].CGPath;
+        self.barBackgroundView.layer.shadowPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 44+[LLNavigationBar statusBarHeight])].CGPath;
         self.barBackgroundView.layer.shadowRadius = 3;
         self.barBackgroundView.layer.shadowOpacity = 0.7;
     }else {
@@ -107,7 +107,7 @@ LLNavigationBarSeparatorStyleKey const LLNavigationBarSeparatorStyleShadow = @"L
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.barBackgroundView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.barBackgroundView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self.barBackgroundView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
-    [self.barBackgroundView addConstraint:[NSLayoutConstraint constraintWithItem:self.barBackgroundView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:44+[self statusBarHeight]]];
+    [self.barBackgroundView addConstraint:[NSLayoutConstraint constraintWithItem:self.barBackgroundView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:44+[LLNavigationBar statusBarHeight]]];
     
     UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
     self.blurView = [[UIVisualEffectView alloc] initWithEffect:effect];
@@ -162,13 +162,13 @@ LLNavigationBarSeparatorStyleKey const LLNavigationBarSeparatorStyleShadow = @"L
 - (void)applyConstraint {
     self.translatesAutoresizingMaskIntoConstraints = NO;
     
-    [self.superview addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.superview attribute:NSLayoutAttributeTop multiplier:1 constant:[self statusBarHeight]]];
+    [self.superview addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.superview attribute:NSLayoutAttributeTop multiplier:1 constant:[LLNavigationBar statusBarHeight]]];
     [self.superview addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.superview attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
     [self.superview addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.superview attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:self attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:44]];
     
 }
-- (CGFloat)statusBarHeight {
++ (CGFloat)statusBarHeight {
     if (@available(iOS 11.0, *)) {
         if ([UIApplication sharedApplication].delegate.window.safeAreaInsets.bottom > 0) {
             return 44;
@@ -264,6 +264,29 @@ static const void *kEnableGestureKey = &kEnableGestureKey;
         return bar;
     }
     return nil;
+}
+- (void)setReplacedNavigationBar:(__kindof UIView *)replacedNavigationBar {
+    if (![replacedNavigationBar isKindOfClass:[UIView class]]) {
+        return;
+    }
+    for (NSLayoutConstraint *constraint in replacedNavigationBar.constraints) {
+        if (constraint.firstItem == replacedNavigationBar) {
+            [replacedNavigationBar removeConstraint:constraint];
+        }
+    }
+    for (UIView *subview in self.navigationBar.subviews) {
+        [subview removeFromSuperview];
+    }
+    self.navigationBar.defaultLeftView = nil;
+    self.navigationBar.defaultRightView = nil;
+    self.navigationBar.defaultTitleView = nil;
+    replacedNavigationBar.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.navigationBar addSubview:replacedNavigationBar];
+    [self.navigationBar addConstraint:[NSLayoutConstraint constraintWithItem:replacedNavigationBar attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.navigationBar attribute:NSLayoutAttributeBottom multiplier:1 constant:0]];
+    [self.navigationBar addConstraint:[NSLayoutConstraint constraintWithItem:replacedNavigationBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.navigationBar attribute:NSLayoutAttributeLeft multiplier:1 constant:0]];
+    [self.navigationBar addConstraint:[NSLayoutConstraint constraintWithItem:replacedNavigationBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.navigationBar attribute:NSLayoutAttributeRight multiplier:1 constant:0]];
+    [replacedNavigationBar addConstraint:[NSLayoutConstraint constraintWithItem:replacedNavigationBar attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:44+[LLNavigationBar statusBarHeight]]];
+    
 }
 
 - (UIViewController *)forwardViewController {//TODO 持有

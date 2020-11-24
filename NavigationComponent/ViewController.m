@@ -36,6 +36,11 @@
         self.navigationBar.backgroundImage = [UIImage imageNamed:@"timg.jpeg"];
         self.navigationItem.titleColor = [UIColor whiteColor];
         self.navigationItem.subTitleColor = [UIColor whiteColor];
+        
+//        UIView *red = UIView.new;
+//        red.backgroundColor = UIColor.redColor;
+//        [self setReplacedNavigationBar:red];
+
     }
     self.navigationItem.title = @"标题标题标题标题标题标题标题标题标题标题标题";
     self.navigationItem.subTitle = @"副标题";
@@ -45,7 +50,7 @@
     self.navigationItem.leftItemFont = [UIFont systemFontOfSize:16];
     self.navigationItem.rightItemTitle = @"next";
     [self.navigationItem addLeftViewTarget:self action:@selector(leftViewClick) forControlEvents:UIControlEventTouchUpInside];
-    
+
     self.level.text = [NSString stringWithFormat:@"第%lu层", [self.navigationController.childViewControllers count]];
     self.index = (self.navigationController.viewControllers.count > 1) ? 1 : 0;
     self.levelNum.text = [NSString stringWithFormat:@"%lu", self.index];
